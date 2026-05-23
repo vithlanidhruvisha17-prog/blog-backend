@@ -71,15 +71,10 @@ exports.forgotPassword = async (req, res) => {
         await user.save();
 
         const transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 587,         
-    secure: false,     
+    service: 'gmail', // Bas ye ek line saara magic karegi!
     auth: {
-        user: process.env.EMAIL_USER, 
-        pass: process.env.EMAIL_PASS  
-    },
-    tls: {
-        rejectUnauthorized: false 
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
     }
 });
 
