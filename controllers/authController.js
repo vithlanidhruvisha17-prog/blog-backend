@@ -7,9 +7,8 @@ const bcrypt = require('bcryptjs');
 
 const client = new OAuth2Client(process.env.REACT_APP_GOOGLE_CLIENT_ID || "1019401085962-s7jkvt87ap1b72r8ie8hjdqtvig6504l.apps.googleusercontent.com");
 
-// ========================================================
 // 1. GOOGLE LOGIN
-// ========================================================
+
 exports.googleLogin = async (req, res) => {
     const { token } = req.body;
     if (!token) return res.status(400).json({ message: "Google token is missing!" });
@@ -51,9 +50,8 @@ exports.googleLogin = async (req, res) => {
     }
 };
 
-// ========================================================
-// 2. FORGOT PASSWORD - SEND 6-DIGIT OTP (ENGLISH EMAIL)
-// ========================================================
+// 2. FORGOT PASSWORD - SEND 6-DIGIT OTP 
+
 exports.forgotPassword = async (req, res) => {
     const { email } = req.body;
 
@@ -80,7 +78,6 @@ exports.forgotPassword = async (req, res) => {
             },
         });
 
-        // Professional English Mail Template
         const mailOptions = {
             from: `"BlogHub PRO" <${process.env.EMAIL_USER}>`,
             to: user.email,
@@ -114,9 +111,8 @@ exports.forgotPassword = async (req, res) => {
     }
 };
 
-// ========================================================
 // 3. VERIFY OTP
-// ========================================================
+
 exports.verifyOTP = async (req, res) => {
     const { email, otp } = req.body;
 
@@ -138,7 +134,6 @@ exports.verifyOTP = async (req, res) => {
             return res.status(400).json({ message: "The OTP has expired. Please request a new one." });
         }
 
-        // Input wale OTP ko hash karke DB wale se match karna
         const hashedInputOTP = crypto.createHash('sha256').update(otp.trim()).digest('hex');
 
         if (hashedInputOTP !== user.resetOTP) {
@@ -157,9 +152,8 @@ exports.verifyOTP = async (req, res) => {
     }
 };
 
-// ========================================================
 // 4. RESET PASSWORD AFTER OTP VERIFICATION
-// ========================================================
+
 exports.resetPassword = async (req, res) => {
     const { email, password } = req.body;
 
@@ -173,7 +167,6 @@ exports.resetPassword = async (req, res) => {
             return res.status(404).json({ message: "User session not found." });
         }
 
-        // Security check: Kya user ne actual me OTP clear pass kiya h?
         if (!user.isOTPVerified) {
             return res.status(403).json({ message: "Unauthorized access. Please verify your OTP first." });
         }

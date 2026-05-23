@@ -18,7 +18,7 @@ const PostSchema = new mongoose.Schema({
     
     author: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User', // Task 1 ke User model se connect kar raha hai
+        ref: 'User', 
         required: true
     },
     createdAt: {

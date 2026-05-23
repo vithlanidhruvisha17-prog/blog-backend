@@ -37,7 +37,6 @@ router.post('/login', async (req, res) => {
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
 
-        // TOKEN mein 'id' pass kar rahe hain (Most Important)
         const token = jwt.sign(
             { id: user._id, username: user.username }, 
             process.env.JWT_SECRET, 

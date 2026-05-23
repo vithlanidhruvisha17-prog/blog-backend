@@ -10,9 +10,9 @@ const path = require('path');
 
 
 cloudinary.config({
-    cloud_name: 'dzusj956x',
-    api_key: '677891769265838',
-    api_secret: '-HxWR0NeEctROGDl7hu8YPjw0m4'
+    cloud_name: process.env.CLOUD_NAME,
+    api_key: process.env.API_KEY,
+    api_secret: process.env.API_SECRET
 });
 
 const storage = new CloudinaryStorage({

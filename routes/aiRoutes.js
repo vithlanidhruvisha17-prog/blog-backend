@@ -32,7 +32,6 @@ router.post('/generate-blog', async (req, res) => {
         console.warn("⚠️ Primary API Key failed or limit hit! Switching to Backup Key...", primaryError.message);
 
         try {
-            // Agar Primary fail hui, toh code yahan aayega aur Backup Key use karega
             const aiBackup = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY_BACKUP });
             
             const responseBackup = await aiBackup.models.generateContent({
@@ -46,7 +45,6 @@ router.post('/generate-blog', async (req, res) => {
         } catch (backupError) {
             console.error("❌ Both Primary and Backup API Keys failed!", backupError.message);
             
-            // SMART FALLBACK: Agar dono keys fail ho gayi (God forbid!), toh Mock Data bhej do
             if (promptType === 'title') {
                 return res.json({ 
                     result: `Optimized Title: Master ${topic || 'This Topic'} in 2026 (System Safe Mode)` 
