@@ -71,12 +71,14 @@ exports.forgotPassword = async (req, res) => {
         await user.save();
 
         const transporter = nodemailer.createTransport({
-    service: 'gmail', // Bas ye ek line saara magic karegi!
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-    }
-});
+        host: 'smtp-relay.brevo.com', 
+        port: 587,                    
+        secure: false,                 
+        auth: {
+            user: 'a68535001@smtp-brevo.com', 
+            pass: 'swjvzN85maQREyMV'        
+        }
+    });
 
         const mailOptions = {
             from: `"BlogHub PRO" <${process.env.EMAIL_USER}>`,
