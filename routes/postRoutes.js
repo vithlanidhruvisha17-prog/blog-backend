@@ -28,7 +28,6 @@ const upload = multer({ storage: storage });
 
 router.get('/test', (req, res) => res.send("Routes are working!"));
 
-// 1. Saari posts fetch karne wala route (Updated with populate)
 router.get('/', async (req, res) => {
     try {
         const { search } = req.query;
@@ -40,7 +39,7 @@ router.get('/', async (req, res) => {
 
         const posts = await Post.find(query)
             .populate('author', 'username')
-            .populate('likes', 'username') // ✨ Like karne walo ka naam manga liya
+            .populate('likes', 'username') 
             .sort({ createdAt: -1 });
 
         res.json(posts);
@@ -49,7 +48,6 @@ router.get('/', async (req, res) => {
     }
 });
 
-// 2. Apni posts fetch karne wala route (Yahan change chahiye tha aapko!)
 router.get('/my-posts', auth, async (req, res) => {
     try {
         // Token se aane wali string ID
@@ -60,7 +58,6 @@ router.get('/my-posts', auth, async (req, res) => {
             return res.status(400).json({ message: "Token mein user ID nahi mili" });
         }
 
-        // ✨ .populate('likes', 'username') laga diya taaki ID ki jagah naam aaye
         const posts = await Post.find({ 
             author: new mongoose.Types.ObjectId(userId) 
         })
@@ -76,12 +73,11 @@ router.get('/my-posts', auth, async (req, res) => {
     }
 });
 
-// 3. Single post fetch karne wala route (Updated with populate)
 router.get('/:id', async (req, res) => {
     try {
         const post = await Post.findById(req.params.id)
             .populate('author', 'username')
-            .populate('likes', 'username'); // ✨ Idhar bhi add kar diya safety ke liye
+            .populate('likes', 'username'); 
             
         if (!post) return res.status(404).json({ message: "Post nahi mila!" });
         res.json(post);
@@ -110,14 +106,14 @@ router.post('/create', auth, upload.array('files', 5), async (req, res) => {
         res.status(201).json(savedPost);
     } catch (err) {
         console.error("Upload Error:", err);
-        res.status(500).json({ message: "Cloudinary upload fail ho gaya!" });
+        res.status(500).json({ message: "Cloudinary upload fail!" });
     }
 });
 
 router.put('/:id', auth, async (req, res) => {
     try {
         let post = await Post.findById(req.params.id);
-        if (!post) return res.status(404).json({ message: "Post nahi mila!" });
+        if (!post) return res.status(404).json({ message: "Post not found!" });
         if (post.author.toString() !== req.user.id) return res.status(401).json({ message: "Unauthorized" });
         post = await Post.findByIdAndUpdate(req.params.id, req.body, { new: true });
         res.json(post);
@@ -136,7 +132,6 @@ router.put('/:id/like', auth, async (req, res) => {
         }
         await post.save();
         
-        // ✨ Like karne ke baad bhi updated populated data bhej rahe hain
         const updatedPost = await Post.findById(req.params.id).populate('likes', 'username');
         res.json(updatedPost.likes);
     } catch (err) { res.status(500).json("Error liking post"); }
@@ -159,7 +154,7 @@ router.post('/:id/comment', auth, async (req, res) => {
 router.delete('/:id', auth, async (req, res) => {
     try {
         const post = await Post.findById(req.params.id);
-        if (!post) return res.status(404).json({ message: "Post nahi mila!" });
+        if (!post) return res.status(404).json({ message: "Post not found!" });
         if (post.author.toString() !== req.user.id) return res.status(401).json({ message: "Unauthorized" });
         await post.deleteOne();
         res.json({ message: "Deleted" });
